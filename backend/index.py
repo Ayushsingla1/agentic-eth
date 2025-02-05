@@ -5,6 +5,9 @@ from web3 import Web3
 from fastapi import FastAPI, BackgroundTasks
 import logging
 import json
+import uvicorn
+from contextlib import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
 
 logging.basicConfig(level=logging.INFO)
 
@@ -51,9 +54,8 @@ class PriceAggregator:
 class ETHOracleAgent:
     def __init__(self, contract_address, private_key, abi_path):
         self.w3 = Web3(Web3.HTTPProvider('https://sepolia.base.org'))
-        
         if not self.w3.is_connected():
-            raise ConnectionError("Failed to connect to Ethereum network")
+            raise ConnectionError("Failed to connect to base network")
         
         self.contract_address = Web3.to_checksum_address(contract_address)
         self.private_key = private_key
@@ -69,32 +71,68 @@ class ETHOracleAgent:
             price_data = await PriceAggregator.fetch_prices()
             current_price = price_data['median_price']
             
-            tx = self.contract.functions.submitPrice(current_price).buildTransaction({
+            tx = self.contract.functions.submitPrice(current_price).build_transaction({
                 'from': self.account.address,
-                'nonce': self.w3.eth.getTransactionCount(self.account.address),
-                'gas': 200000,
+                'nonce': self.w3.eth.get_transaction_count(self.account.address),
+                'gas': 10000000,
                 'gasPrice': self.w3.eth.gas_price,
                 'chainId': 84532
             })
             
-            signed_tx = self.account.signTransaction(tx)
+            # Sign transaction
+            signed_tx = self.account.sign_transaction(tx)
             
-            tx_hash = await self.w3.eth.sendRawTransaction(signed_tx.rawTransaction)
+            # Send transaction
+            tx_hash = self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
             print(tx_hash)
             return tx_hash.hex()
         
         except Exception as e:
             logging.error(f"Price submission error: {e}")
             return None
+        
+    # async def register_node(self):
+    #     try:
+    #         tx = self.contract.functions.
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup logic
+    try:
+        oracle_agent = ETHOracleAgent(
+            contract_address='0x07E036a87e020b0bbb2016d7893ad424aDC9F8bC',
+            private_key='',
+            abi_path='./contract_abi.json'
+        )
+        app.state.oracle_agent = oracle_agent
+        
+        # Background task for periodic price submission
+        async def periodic_price_submission():
+            while True:
+                try:
+                    await oracle_agent.submit_price()
+                    await asyncio.sleep(3600)  # Submit price every hour
+                except Exception as e:
+                    logging.error(f"Periodic price submission failed: {e}")
+        
+        price_task = asyncio.create_task(periodic_price_submission())
+        
+        yield
+        
+        # Cleanup logic
+        price_task.cancel()
+    
+    except Exception as e:
+        logging.error(f"Startup error: {e}")
+        yield
 
-# You need to provide actual values
-oracle_agent = ETHOracleAgent(
-    contract_address='0x07E036a87e020b0bbb2016d7893ad424aDC9F8bC',
-    private_key='b04b62c39ec72871daa46f404a84def21f1033be710a8aa24536f499cb95f2ae',
-    abi_path='./contract_abi.json'
-)
+app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(CORSMiddleware,allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    allow_origins = ['http://localhost:5173']
+    )
 
 @app.get("/current-price")
 async def get_current_price():
@@ -105,13 +143,14 @@ async def get_current_price():
         return {"error": str(e)}
 
 @app.post("/submit-price")
-async def submit_price(background_tasks: BackgroundTasks):
+async def submit_price():
     try:
+        oracle_agent = app.state.oracle_agent
         tx = await oracle_agent.submit_price()
         return {"transaction": tx}
     except Exception as e:
         logging.error(f"Error submitting price: {e}")
         return {"error": str(e)}
 
-
-
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

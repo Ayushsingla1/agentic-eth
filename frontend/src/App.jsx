@@ -1,9 +1,10 @@
+import ETHPriceOracleUI from "./ethprize"
 
 
 const App = () => {
   return (
     <div>
-      hello 
+      <ETHPriceOracleUI/>
     </div>
   )
 }

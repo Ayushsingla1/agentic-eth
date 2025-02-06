@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, TrendingUp, Newspaper, DollarSign, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 import QuickAction from '../components/Button';
+import axios from 'axios';
+import { BACKEND_URL } from '../config/backendInfo';
 
-const mockResponses = {
-};
 
 export default function AIChat() {
   const [messages, setMessages] = useState([
@@ -25,7 +25,7 @@ export default function AIChat() {
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = (content) => {
+  const handleSend = async(content) => {
     if (!content.trim()) return;
 
     setMessages(prev => [...prev, {
@@ -35,23 +35,18 @@ export default function AIChat() {
       timestamp: new Date(),
     }]);
 
-    setTimeout(() => {
-      let response = 'I\'m not sure about that. Try asking about market sentiment, prices, news, or staking.';
-      
-      Object.entries(mockResponses).forEach(([keyword, reply]) => {
-        if (content.toLowerCase().includes(keyword)) {
-          response = reply;
-        }
-      });
+    // const res = await axios.post(`${BACKEND_URL}/query`,{
+    //     userQuery : content.toLowerCase()
+    // })
 
-      setMessages(prev => [...prev, {
-        id: Date.now() + 1,
-        type: 'bot',
-        content: response,
-        timestamp: new Date(),
-      }]);
-    }, 1000);
-
+    // let response = res.data.data;
+    // console.log(response);
+    // setMessages(prev => [...prev,{
+    //     id : Date.now() + 1,
+    //     type : 'bot',
+    //     content : response,
+    //     timestamp : new Date(),
+    // }])
     setInput('');
   };
 
@@ -88,12 +83,12 @@ export default function AIChat() {
         <QuickAction
           icon={ArrowUpCircle}
           label="Staking Info"
-          onClick={() => handleQuickAction("Tell me about staking")}
+          onClick={() => handleQuickAction("Stake more Amount")}
         />
         <QuickAction
           icon={ArrowDownCircle}
           label="Unstaking Info"
-          onClick={() => handleQuickAction("How can I unstake?")}
+          onClick={() => handleQuickAction("Want to unstake Some amount")}
         />
       </div>
 

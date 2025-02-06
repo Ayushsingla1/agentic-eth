@@ -1,4 +1,3 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit"
 import Navigation from "./components/Navigation"
 import Dashboard from "./pages/Home"
 import { Route, Routes } from "react-router-dom"

@@ -1,6 +1,6 @@
 import { Wallet , Coins , Clock} from "lucide-react";
 
-function StakingInfo() {
+function StakingInfo({stakedAmount}) {
     return (
       <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-2xl border border-gray-700/50">
         <h3 className="text-lg font-semibold mb-6 text-white">Staking Information</h3>
@@ -24,7 +24,7 @@ function StakingInfo() {
               <Wallet className="w-5 h-5 text-emerald-400" />
               <span className="text-gray-300">Total Staked</span>
             </div>
-            <span className="text-white font-medium">25.5 ETH</span>
+            <span className="text-white font-medium">{stakedAmount} ETH</span>
           </div>
         </div>
       </div>

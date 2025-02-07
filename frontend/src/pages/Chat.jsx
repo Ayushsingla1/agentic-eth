@@ -35,18 +35,18 @@ export default function AIChat() {
       timestamp: new Date(),
     }]);
 
-    // const res = await axios.post(`${BACKEND_URL}/query`,{
-    //     userQuery : content.toLowerCase()
-    // })
+    const res = await axios.post(`${BACKEND_URL}/query`,{
+        userQuery : content.toLowerCase()
+    })
 
-    // let response = res.data.data;
-    // console.log(response);
-    // setMessages(prev => [...prev,{
-    //     id : Date.now() + 1,
-    //     type : 'bot',
-    //     content : response,
-    //     timestamp : new Date(),
-    // }])
+    let response = res.data.data;
+    console.log(response);
+    setMessages(prev => [...prev,{
+        id : Date.now() + 1,
+        type : 'bot',
+        content : response,
+        timestamp : new Date(),
+    }])
     setInput('');
   };
 

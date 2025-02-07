@@ -1,4 +1,4 @@
-
+import React from 'react';
 
 function StatCard({ icon: Icon, title, value, className = '' }) {
   return (
@@ -16,4 +16,10 @@ function StatCard({ icon: Icon, title, value, className = '' }) {
   );
 }
 
+
 export default StatCard;
+
+
+
+
+

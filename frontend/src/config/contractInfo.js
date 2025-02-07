@@ -146,6 +146,19 @@ export const ABI = [
 		"inputs": [
 			{
 				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "stakeMore",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
 				"name": "price",
 				"type": "uint256"
 			}
@@ -171,6 +184,19 @@ export const ABI = [
 			}
 		],
 		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "unstake",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -275,6 +301,19 @@ export const ABI = [
 				"internalType": "struct PriceOracleNetwork.Agent",
 				"name": "",
 				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getLast10FinalPrices",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
 			}
 		],
 		"stateMutability": "view",
@@ -404,6 +443,25 @@ export const ABI = [
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "roundIds",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "submissionWindow",
 		"outputs": [
@@ -430,5 +488,6 @@ export const ABI = [
 		"type": "function"
 	}
 ]
+export const contractAddress = "0x7dec0110252c2b22f0e69fe33d4155260042469c";
 
-export const contractAddress = "0xe41B97BCea7cB8B67DC3B5b3a81e273f53A77231";c
+// "0xDE10A43a9f7698eFf101e2615808538D243F120D";

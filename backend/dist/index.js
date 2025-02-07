@@ -25,8 +25,8 @@ require('dotenv').config();
 const hf = new inference_1.HfInference("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");
 const COINGECKO_API = "https://api.coingecko.com/api/v3";
 const contractABI = config_1.ABI;
-const RPC_URL = 'https://sepolia.base.org';
-const contractAddress = "0x7dec0110252c2b22f0e69fe33d4155260042469c";
+const RPC_URL = 'https://sepolia-rollup.arbitrum.io/rpc';
+const contractAddress = "0xBA3e9213af957F7A6d3788dC36409779dc724A88";
 const privateKey = process.env.PRIVATE_KEY;
 const provider = new ethers_1.ethers.JsonRpcProvider(RPC_URL);
 const wallet = new ethers_1.ethers.Wallet(privateKey, provider);
@@ -210,5 +210,6 @@ app.post("/query", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(500).json({ error: `Internal Server Error: ${error.message}` });
     }
 }));
-setInterval(updatePrice, 16 * 60 * 1000);
+// setInterval(updatePrice, 16 * 60 * 1000);
+updatePrice();
 app.listen(3000, () => console.log("Server running on port 3000"));

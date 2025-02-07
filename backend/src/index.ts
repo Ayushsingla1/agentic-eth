@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cors());
 require('dotenv').config();
 
-const hf = new HfInference("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");
+const hf = new HfInference(process.env.HUGGING_FACE);
 const COINGECKO_API = "https://api.coingecko.com/api/v3";
 const contractABI = ABI;
 

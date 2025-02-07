@@ -197,5 +197,5 @@ app.post("/query", async (req : any, res : any) => {
 });
 
 
-setInterval(updatePrice, 15 * 60 * 1000);
+setInterval(updatePrice, 16 * 60 * 1000);
 app.listen(3000, () => console.log("Server running on port 3000"));

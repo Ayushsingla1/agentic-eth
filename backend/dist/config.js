@@ -311,6 +311,19 @@ exports.ABI = [
     },
     {
         "inputs": [],
+        "name": "getLast10FinalPrices",
+        "outputs": [
+            {
+                "internalType": "uint256[]",
+                "name": "",
+                "type": "uint256[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "getPrice",
         "outputs": [
             {
@@ -422,6 +435,25 @@ exports.ABI = [
     {
         "inputs": [],
         "name": "requiredStake",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "roundIds",
         "outputs": [
             {
                 "internalType": "uint256",

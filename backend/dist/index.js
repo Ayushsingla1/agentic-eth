@@ -210,5 +210,5 @@ app.post("/query", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(500).json({ error: `Internal Server Error: ${error.message}` });
     }
 }));
-setInterval(updatePrice, 15 * 60 * 1000);
+setInterval(updatePrice, 16 * 60 * 1000);
 app.listen(3000, () => console.log("Server running on port 3000"));

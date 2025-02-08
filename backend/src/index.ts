@@ -3,7 +3,7 @@ import axios from "axios";
 import { HfInference } from "@huggingface/inference";
 import cors from "cors";
 import { ethers } from "ethers";
-import { ABI } from "./config";
+import { ABI } from "./config.js";
 const app = express();
 
 app.use(express.json());
@@ -15,7 +15,7 @@ const COINGECKO_API = "https://api.coingecko.com/api/v3";
 const contractABI = ABI;
 
 const RPC_URL = 'https://sepolia-rollup.arbitrum.io/rpc';
-const contractAddress = "0xBA3e9213af957F7A6d3788dC36409779dc724A88";
+const contractAddress = "0x7DEC0110252C2B22f0e69fe33D4155260042469c";
 const privateKey = process.env.PRIVATE_KEY;
 
 const provider = new ethers.JsonRpcProvider(RPC_URL);
@@ -29,7 +29,6 @@ async function getCryptoPrices(ids = "ethereum,bitcoin") {
     return data;
   } catch (error) {
     console.error("Error fetching crypto prices:", error);
-    // throw new Error("Failed to fetch crypto prices");
   }
 }
 
@@ -55,6 +54,19 @@ async function updatePrice() {
   }catch(e){
     console.log("unable to update price : " ,e);
   } 
+}
+
+async function mintToken(amount : string){
+  console.log(amount)
+  const tx = await contract.getRewards(parseInt(amount));
+  await tx.wait();
+  const hash = tx.hash;
+  return hash;
+}
+
+async function getTokenCount(){
+  const tx = await contract.getRewardCount();
+  return parseInt(tx);
 }
 
 async function stakeAmount(amount : string){
@@ -138,7 +150,7 @@ app.post("/query", async (req : any, res : any) => {
       model: "facebook/bart-large-mnli",
       inputs: userQuery,
       parameters: {
-        candidate_labels: ["price", "sentiment", "prediction", "news" , "staking","unstake"],
+        candidate_labels: ["price", "sentiment", "prediction", "news" , "staking", "unstake", "reward"],
       },
     });
 
@@ -168,7 +180,6 @@ app.post("/query", async (req : any, res : any) => {
 
       case "staking":
         const number = userQuery.match(/\d+(\.\d+)?/g);
-        console.log(typeof number[0]);
         if(number){
           const response = await stakeAmount(number[0]);
           return res.json({type : "staking" , data : response});
@@ -185,6 +196,17 @@ app.post("/query", async (req : any, res : any) => {
         }
         else{
           return res.json({type : "unstaking" , data : "You can unstake some amount of tokens from the amount that you have staked"})
+        }
+      
+      case "reward" : 
+        const tokenCount = userQuery.match(/\d+(\.\d+)?/g);
+        if(tokenCount){
+          const response = await mintToken(tokenCount[0]);
+          return res.json({type : "reward" , data : `You've been minted ${tokenCount} tokens`})
+        }
+        else{
+          const response = await getTokenCount();
+          return res.json({type : "rewardCount" , data : `You have a total of ${response} amount of tokens`})
         }
 
       default:

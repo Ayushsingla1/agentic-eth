@@ -26,7 +26,7 @@ const hf = new inference_1.HfInference("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");
 const COINGECKO_API = "https://api.coingecko.com/api/v3";
 const contractABI = config_1.ABI;
 const RPC_URL = 'https://sepolia-rollup.arbitrum.io/rpc';
-const contractAddress = "0xBA3e9213af957F7A6d3788dC36409779dc724A88";
+const contractAddress = "0x7DEC0110252C2B22f0e69fe33D4155260042469c";
 const privateKey = process.env.PRIVATE_KEY;
 const provider = new ethers_1.ethers.JsonRpcProvider(RPC_URL);
 const wallet = new ethers_1.ethers.Wallet(privateKey, provider);
@@ -210,6 +210,5 @@ app.post("/query", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(500).json({ error: `Internal Server Error: ${error.message}` });
     }
 }));
-// setInterval(updatePrice, 16 * 60 * 1000);
-updatePrice();
+setInterval(updatePrice, 16 * 60 * 1000);
 app.listen(3000, () => console.log("Server running on port 3000"));

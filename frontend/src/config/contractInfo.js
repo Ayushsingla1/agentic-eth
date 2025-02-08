@@ -7,7 +7,13 @@ export const ABI = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_mint",
+				"type": "address"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
 	},
@@ -45,6 +51,19 @@ export const ABI = [
 		],
 		"name": "AgentRegistered",
 		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "getRewards",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -235,6 +254,11 @@ export const ABI = [
 				"internalType": "uint256",
 				"name": "totalSubmissions",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "rewardTokens",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -296,6 +320,11 @@ export const ABI = [
 						"internalType": "uint256",
 						"name": "totalSubmissions",
 						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "rewardTokens",
+						"type": "uint256"
 					}
 				],
 				"internalType": "struct PriceOracleNetwork.Agent",
@@ -334,12 +363,38 @@ export const ABI = [
 	},
 	{
 		"inputs": [],
+		"name": "getRewardCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "minimumSubmissions",
 		"outputs": [
 			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "mintContract",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -488,6 +543,6 @@ export const ABI = [
 		"type": "function"
 	}
 ]
-export const contractAddress = "0xBA3e9213af957F7A6d3788dC36409779dc724A88";
+export const contractAddress = "0x7DEC0110252C2B22f0e69fe33D4155260042469c";
 
 // "0xDE10A43a9f7698eFf101e2615808538D243F120D";

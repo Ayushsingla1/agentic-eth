@@ -40,12 +40,11 @@ export default function Dashboard() {
     }
   
     if(isSuccess && isSuccess2){
-        const stakedAmount = parseInt(data.stakedAmount)/(10 ** 17);
+        const stakedAmount = parseInt(data.stakedAmount)/(10 ** 18);
         const totalSubmissions = parseInt(data.totalSubmissions);
         const SuccessRate = parseInt(data.totalSubmissions) === 0 ? (0) : (parseInt(data.totalSubmissions - data.penaltyCount)/(parseInt(data.totalSubmissions)) * 100) ;
         const isRegistered = data.isRegistered;
         const LastPrice = (parseInt(data2)/(10 ** 18)).toFixed(3);
-        const SuccessfulFeeds = parseInt(data.totalSubmissions - data.penaltyCount);
 
         return (
         
@@ -79,8 +78,8 @@ export default function Dashboard() {
                 />
                 <StatCard
                   icon={CheckCircle}
-                  title="Successful Feeds"
-                  value={SuccessfulFeeds}
+                  title="Amount Staked"
+                  value={stakedAmount}
                 />
                 <StatCard
                   icon={BarChart3}

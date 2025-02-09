@@ -114,6 +114,14 @@ DOCUMENTATIONS
     npm run dev
     ```
 
+Contract Info
+-------------
+**Contracts are deployed on Arbitrum Sepolia Testnet**
+
+**Main Contract Address** : 0x7DEC0110252C2B22f0e69fe33D4155260042469c
+
+**Token Contract Address** : 0x4279b293D55d77BF1BDA80d2C5071f26C81D0632
+
 
 🙌 Contributors
 ---------------

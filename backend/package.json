@@ -4,8 +4,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsc -b && node ./dist/index.js",
-    "build" : "tsc -b"
+    "build": "tsc -b"
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -16,10 +17,12 @@
     "@types/express": "^5.0.0",
     "axios": "^1.7.9",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
     "ethers": "^6.13.5",
     "express": "^4.21.2",
     "gitignore": "^0.7.0",
+    "nillion-sv-wrappers": "^1.0.9",
     "typescript": "^5.7.3"
   }
 }

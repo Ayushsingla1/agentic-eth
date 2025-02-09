@@ -1,1 +1,1 @@
-{"root":["./src/config.ts","./src/index.ts"],"version":"5.7.3"}
+{"root":["./src/config.ts","./src/index.ts","./src/nillion.ts","./src/nillionorgconfig.ts","./src/uuid.ts"],"version":"5.7.3"}

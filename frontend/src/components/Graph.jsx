@@ -14,9 +14,7 @@ const priceData = [
     { timestamp: '10:15', price: 1842.65 },
     { timestamp: '10:30', price: 1841.90 },
     { timestamp: '10:45', price: 1843.55 },
-  ];
-
-  
+];
 
 function PriceFeedGraph() {
 

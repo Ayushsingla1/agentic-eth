@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { Bot, Award, CheckCircle, BarChart3, Wallet, ArrowUpCircle, ArrowDownCircle, Clock, Cpu, Zap, Radio } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import React from 'react';
+import { Bot, Clock, Cpu, Zap, Radio } from 'lucide-react';
 
 function AgentInfo() {
     return (

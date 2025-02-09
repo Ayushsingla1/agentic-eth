@@ -3,6 +3,7 @@ import { Send, Bot, TrendingUp, Newspaper, DollarSign, ArrowUpCircle, ArrowDownC
 import QuickAction from '../components/Button';
 import axios from 'axios';
 import { BACKEND_URL } from '../config/backendInfo';
+import {useAccount} from "wagmi";
 
 
 export default function AIChat() {
@@ -16,6 +17,7 @@ export default function AIChat() {
   ]);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
+  const {address} = useAccount();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -36,7 +38,8 @@ export default function AIChat() {
     }]);
 
     const res = await axios.post(`${BACKEND_URL}/query`,{
-        userQuery : content.toLowerCase()
+        userQuery : content.toLowerCase(),
+        userId : address
     })
 
     let response = res.data.data;

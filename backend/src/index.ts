@@ -1,14 +1,18 @@
-import express from "express";
+import express, { response } from "express";
 import axios from "axios";
 import { HfInference } from "@huggingface/inference";
 import cors from "cors";
 import { ethers } from "ethers";
 import { ABI } from "./config.js";
+import { StakingData as StakingRecord } from "./nillion.js";
+import { publicKeyToUUID } from "./uuid.js";
+import { initializeConnections , storeStakingRecord , getStakingRecords } from "./nillion.js";
+import 'dotenv/config';
+
 const app = express();
 
 app.use(express.json());
 app.use(cors());
-require('dotenv').config();
 
 interface ResponseType {
     success: boolean;
@@ -26,6 +30,7 @@ const privateKey = process.env.PRIVATE_KEY;
 let provider: ethers.JsonRpcProvider;
 let wallet: ethers.Wallet;
 let contract: ethers.Contract;
+
 
 if (!privateKey) {
     console.error("Private key not found in environment variables");
@@ -127,7 +132,7 @@ async function getTokenCount(): Promise<ResponseType> {
     }
 }
 
-async function stakeAmount(amount: string): Promise<ResponseType> {
+async function stakeAmount(amount: string , address : string): Promise<ResponseType> {
     try {
         if (!amount || isNaN(parseFloat(amount))) {
             return { success: false, msg: "Invalid stake amount specified" };
@@ -146,14 +151,30 @@ async function stakeAmount(amount: string): Promise<ResponseType> {
             return { success: false, msg: "Staking transaction failed to confirm" };
         }
 
-        return { success: true, msg: `Transaction completed successfully, hash: ${tx.hash}` };
+        const userId = publicKeyToUUID(address).uuid;
+
+        const stakingRecord: StakingRecord = {
+            user_id: userId,
+            staked_amount: { $share: amount },
+            unstaked_amount: { $share: "0" },
+            reward_tokens: { $share: "0" },
+            transactions: [{
+                tx_id: tx.hash,
+                type: 'stake',
+                amount: parseFloat(amount),
+            }],
+        };
+        const response = await storeStakingRecord(stakingRecord);
+        console.log(response);
+
+        return { success: true, msg: `Transaction completed successfully, hash: ${tx.hash} and ${response.msg}` };
     } catch (error) {
         console.error("Staking operation failed:", error);
         return { success: false, msg: "Failed to stake tokens" };
     }
 }
 
-async function unstakeAmount(amount: string): Promise<ResponseType> {
+async function unstakeAmount(amount: string , account : string): Promise<ResponseType> {
     try {
         if (!amount || isNaN(parseFloat(amount))) {
             return { success: false, msg: "Invalid unstake amount specified" };
@@ -168,7 +189,6 @@ async function unstakeAmount(amount: string): Promise<ResponseType> {
         if (!receipt.status) {
             return { success: false, msg: "Unstaking transaction failed to confirm" };
         }
-
         return { success: true, msg: `Transaction completed successfully, hash: ${tx.hash}` };
     } catch (error) {
         console.error("Unstaking operation failed:", error);
@@ -237,7 +257,7 @@ async function predictPrice(historicalPrices: number[]) {
 }
 
 app.post("/query", async (req: any, res: any) => {
-    const { userQuery } = req.body;
+    const { userQuery , userId } = req.body;
     console.log(userQuery);
     
     try {
@@ -285,7 +305,7 @@ app.post("/query", async (req: any, res: any) => {
             case "staking":
                 const number = userQuery.match(/\d+(\.\d+)?/g);
                 if (number) {
-                    const stakeResponse = await stakeAmount(number[0]);
+                    const stakeResponse = await stakeAmount(number[0],userId);
                     if (!stakeResponse.success) {
                         return res.json({ type: "staking", data: stakeResponse.msg });
                     }
@@ -300,7 +320,7 @@ app.post("/query", async (req: any, res: any) => {
             case "unstake":
                 const amount = userQuery.match(/\d+(\.\d+)?/g);
                 if (amount) {
-                    const unstakeResponse = await unstakeAmount(amount[0]);
+                    const unstakeResponse = await unstakeAmount(amount[0],userId);
                     if (!unstakeResponse.success) {
                         return res.json({ type: "unstaking", data: unstakeResponse.msg });
                     }
@@ -338,7 +358,7 @@ app.post("/query", async (req: any, res: any) => {
 });
 
 
-
+initializeConnections();
 setInterval(updatePrice, 16 * 60 * 1000);
 
 const PORT = 3001;

@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ABI = void 0;
-exports.ABI = [
+export const ABI = [
     {
         "inputs": [],
         "name": "finalizeRound",

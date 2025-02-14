@@ -1,1 +1,1 @@
-export const BACKEND_URL = 'https://agentic-eth.onrender.com'
+export const BACKEND_URL = 'https://agentic-oracle.onrender.com'

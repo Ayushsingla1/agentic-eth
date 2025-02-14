@@ -1,12 +1,9 @@
-import express, { response } from "express";
+import express from "express";
 import axios from "axios";
 import { HfInference } from "@huggingface/inference";
 import cors from "cors";
 import { ethers } from "ethers";
 import { ABI } from "./config.js";
-import { StakingData as StakingRecord } from "./nillion.js";
-import { publicKeyToUUID } from "./uuid.js";
-import { initializeConnections , storeStakingRecord , getStakingRecords } from "./nillion.js";
 import 'dotenv/config';
 
 const app = express();
@@ -23,8 +20,8 @@ const hf = new HfInference(process.env.HUGGING_FACE);
 const COINGECKO_API = "https://api.coingecko.com/api/v3";
 const contractABI = ABI;
 
-const RPC_URL = 'https://sepolia-rollup.arbitrum.io/rpc';
-const contractAddress = "0x7DEC0110252C2B22f0e69fe33D4155260042469c";
+const RPC_URL = 'https://rpc.blaze.soniclabs.com';
+const contractAddress = "0x894f819425e78cA3d7a3b877c088120D0b3Efc75";
 const privateKey = process.env.PRIVATE_KEY;
 
 let provider: ethers.JsonRpcProvider;
@@ -46,9 +43,9 @@ try {
     process.exit(1);
 }
 
-async function getCryptoPrices(ids = "ethereum,bitcoin"): Promise<ResponseType> {
+async function getCryptoPrices(ids = "sonic"): Promise<ResponseType> {
     try {
-        const { data } = await axios.get(`${COINGECKO_API}/simple/price?ids=${ids}&vs_currencies=usd`);
+        const { data } = await axios.get(`https://api.binance.com/api/v3/ticker/price?symbol=SUSDT`);
         if (!data) {
             return { success: false, msg: "No price data received" };
         }
@@ -61,11 +58,11 @@ async function getCryptoPrices(ids = "ethereum,bitcoin"): Promise<ResponseType> 
 
 async function getEthPrice(ids = "ethereum"): Promise<ResponseType> {
     try {
-        const { data } = await axios.get(`${COINGECKO_API}/simple/price?ids=${ids}&vs_currencies=usd`);
-        if (!data?.ethereum?.usd) {
+        const { data } = await axios.get(`https://api.binance.com/api/v3/ticker/price?symbol=SUSDT`);
+        if (!data?.price) {
             return { success: false, msg: "Invalid price data received" };
         }
-        return { success: true, msg: String(data.ethereum.usd) };
+        return { success: true, msg: String(data.price) };
     } catch (error) {
         console.error("Failed to get ETH price:", error);
         return { success: false, msg: "Failed to fetch ETH price" };
@@ -151,23 +148,7 @@ async function stakeAmount(amount: string , address : string): Promise<ResponseT
             return { success: false, msg: "Staking transaction failed to confirm" };
         }
 
-        const userId = publicKeyToUUID(address).uuid;
-
-        const stakingRecord: StakingRecord = {
-            user_id: userId,
-            staked_amount: { $share: amount },
-            unstaked_amount: { $share: "0" },
-            reward_tokens: { $share: "0" },
-            transactions: [{
-                tx_id: tx.hash,
-                type: 'stake',
-                amount: parseFloat(amount),
-            }],
-        };
-        const response = await storeStakingRecord(stakingRecord);
-        console.log(response);
-
-        return { success: true, msg: `Transaction completed successfully, hash: ${tx.hash} and ${response.msg}` };
+        return { success: true, msg: `Transaction completed successfully, hash: ${tx.hash}` };
     } catch (error) {
         console.error("Staking operation failed:", error);
         return { success: false, msg: "Failed to stake tokens" };
@@ -279,7 +260,7 @@ app.post("/query", async (req: any, res: any) => {
                 if (!prices.success) {
                     return res.json({ type: "price", data: "Unable to fetch prices at this time" });
                 }
-                const price = (prices.msg as any).ethereum.usd;
+                const price = (prices.msg as any).price;
                 return res.json({ type: "price", data: `Current price of ethereum is : $${price}` });
 
             case "sentiment":
@@ -358,7 +339,6 @@ app.post("/query", async (req: any, res: any) => {
 });
 
 
-initializeConnections();
 setInterval(updatePrice, 16 * 60 * 1000);
 
 const PORT = 3001;
